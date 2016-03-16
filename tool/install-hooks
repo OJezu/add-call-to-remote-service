@@ -1,0 +1,22 @@
+#!/usr/bin/python3
+
+from os import walk
+from os import symlink
+from os import path
+from os import chdir
+from shutil import copy
+from sys import argv
+
+chdir(path.join(path.dirname(argv[0]), '..'))
+
+for dirname, _, files in walk('tool/git-hook'):
+    for name in files :
+        hook = path.join('.git', 'hooks', name);
+        if path.isfile(hook) :
+            print ("Not overwriting %s" % hook)
+        else :
+            print ("Installing %s" % hook)
+            try :
+                symlink(path.join('..', '..', dirname, name), hook)
+            except NotImplementedError :
+                copy(path.join(dirname, name), hook)

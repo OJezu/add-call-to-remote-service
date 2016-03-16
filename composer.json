@@ -1,0 +1,29 @@
+{
+    "name": "ojezu/add-call-to-remote-service-bundle",
+    "description": "Symfony2 bundle that allows configuring Doctrine discrimination maps in children bundles.",
+    "autoload": {
+        "psr-4": { "OJezu\\AddCallToRemoteServiceBundle\\": "src/" }
+    },
+    "authors": [
+        {
+            "name": "Krzysztof Chrapka",
+            "email": "composer@ojezu.org"
+        }
+    ],
+    "require": {
+        "symfony/dependency-injection": "^3.0 || ^2.7",
+        "symfony/http-kernel": "^3.0 || ^2.7"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^2.3"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "tool/install-hooks"
+        ],
+        "test": [
+            "tool/verify-all"
+        ]
+    },
+    "license": "MIT"
+}

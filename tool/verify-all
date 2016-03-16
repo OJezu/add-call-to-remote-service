@@ -1,0 +1,22 @@
+#!/usr/bin/python3
+
+from subprocess import Popen, PIPE
+from os import path
+from os import chdir
+from sys import argv
+
+chdir(path.join(path.dirname(argv[0]), '..'))
+
+checkProcesses = [];
+# checkProcesses += [Popen(['vendor/bin/phpunit', 'UnitTest'])]
+# checkProcesses += [Popen(['vendor/bin/behat'])]
+checkProcesses += [Popen(['vendor/bin/phpcs', '--standard=./phpcs.ruleset.xml', '-s', '.'])]
+
+result = 0
+if not checkProcesses:
+    print("No verification processes performed.")
+for proc in checkProcesses:
+    if proc.wait():
+        result = 1
+
+exit(result)

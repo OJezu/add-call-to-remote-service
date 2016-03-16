@@ -1,0 +1,30 @@
+#!/usr/bin/python3
+
+from subprocess import Popen, PIPE
+from os import path
+from os import chdir
+from sys import argv
+
+chdir(path.join(path.dirname(argv[0]), '..'))
+
+modifiedFilesStream = Popen(['git', 'diff', '--cached', '--name-only'], universal_newlines=True, stdout=PIPE)
+
+modifiedFiles = map(lambda f: f.rstrip('\n'), iter(modifiedFilesStream.stdout.readline, ''))
+existingModifiedFiles = filter(path.isfile, modifiedFiles)
+existingPhpModifiedFiles = filter(lambda f: path.splitext(f)[1] == '.php' , existingModifiedFiles)
+phpFilesToCheck = list(existingPhpModifiedFiles);
+
+checkProcesses = [];
+# checkProcesses += [Popen(['vendor/bin/behat'])]
+
+if phpFilesToCheck:
+    checkProcesses += [Popen(['vendor/bin/phpcs', '--standard=./phpcs.ruleset.xml', '-s'] + phpFilesToCheck)]
+
+result = 0
+if not checkProcesses:
+    print("No verification processes performed.")
+for proc in checkProcesses:
+    if proc.wait():
+        result = 1
+
+exit(result)
