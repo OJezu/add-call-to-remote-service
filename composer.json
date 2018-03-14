@@ -1,6 +1,6 @@
 {
     "name": "ojezu/add-call-to-remote-service-bundle",
-    "description": "Symfony2 bundle that allows configuring Doctrine discrimination maps in children bundles.",
+    "description": "Symfony2 bundle that allows injecting method from one service declaration in DI to another",
     "autoload": {
         "psr-4": { "OJezu\\AddCallToRemoteServiceBundle\\": "src/" }
     },
