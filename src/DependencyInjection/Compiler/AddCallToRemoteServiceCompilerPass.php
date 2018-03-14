@@ -4,6 +4,7 @@ namespace OJezu\AddCallToRemoteServiceBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
  * Finds services tagged with "ojezu.configurable_discrimination" tag, and builds discriminator maps out of that.
@@ -30,7 +31,7 @@ class AddCallToRemoteServiceCompilerPass implements CompilerPassInterface
                 $arguments = [];
                 foreach ($tag as $attributeName => $attributeValue) {
                     $match = [];
-                    if (preg_match('/^argument\.(\d+)$/', $attributeName, $match)) {
+                    if (preg_match('/^argument\.(.+)$/', $attributeName, $match)) {
                         if (is_string($attributeValue)) {
                             if ($attributeValue === '@') {
                                 $attributeValue = $container->getDefinition($serviceName);
@@ -39,7 +40,13 @@ class AddCallToRemoteServiceCompilerPass implements CompilerPassInterface
                             }
                         }
 
-                        $arguments[(int) $match[1]] = $attributeValue;
+                        // XML does not like '[]' chars in attribute names, we must have some other char as separator
+                        // That's why we cannot have nice things.
+                        // Arbitrarily '.' was chosen. Some day we may even allow escaping it.
+
+                        // explode by '.' and make the array notation out of it for PropertyAccess
+                        $propertyPath = '['.implode('][', explode('.', $match[1])).']';
+                        PropertyAccess::createPropertyAccessor()->setValue($arguments, $propertyPath, $attributeValue);
                     }
                 }
 
